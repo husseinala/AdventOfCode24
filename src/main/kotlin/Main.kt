@@ -1,9 +1,7 @@
-import solution.Day1
+import solution.Day2
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 fun main() {
     val startTime = System.currentTimeMillis()
-    Day1.solve()
+    Day2.solve()
     println("Run time: ${System.currentTimeMillis() - startTime}ms")
 }
