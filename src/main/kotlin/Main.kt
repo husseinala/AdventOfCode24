@@ -1,7 +1,7 @@
-import solution.Day4
+import solution.Day5
 
 fun main() {
     val startTime = System.currentTimeMillis()
-    Day4.solve()
+    Day5.solve()
     println("Run time: ${System.currentTimeMillis() - startTime}ms")
 }
