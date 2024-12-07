@@ -1,15 +1,13 @@
 package solution
 
+import utils.GridDirections
 import utils.readFileLines
 
 object Day4 {
 
-    private val dirs = listOf(
-        1 to 0,
-        0 to 1,
-        1 to 1,
-        -1 to 1,
-    )
+    private val dirs = with(GridDirections) {
+        listOf(down, right, downRight, upRight)
+    }
 
     fun solve() {
         part1()
@@ -51,7 +49,7 @@ object Day4 {
                     searchTerm = "MAS",
                     curr = grid[i][j].toString(),
                     currRev = grid[i][j].toString(),
-                    dir = listOf(1 to 1),
+                    dir = listOf(GridDirections.downRight),
                 )
 
                 if (
