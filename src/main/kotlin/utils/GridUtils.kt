@@ -17,3 +17,21 @@ object GridDirections {
         upRight, upLeft, downRight, downLeft
     )
 }
+
+typealias Point = Pair<Int, Int>
+
+val Point.i get() = first
+
+val Point.j get() = second
+
+infix fun Point.liesOn(grid: List<CharArray>) = i in grid.indices && j in grid.indices
+
+operator fun Point.plus(other: Point): Point = i + other.i to j + other.j
+
+operator fun Point.minus(other: Point): Point = i - other.i to j - other.j
+
+operator fun List<CharArray>.get(p: Point) = this[p.i][p.j]
+
+operator fun List<CharArray>.set(p: Point, value: Char) {
+    this[p.i][p.j] = value
+}
