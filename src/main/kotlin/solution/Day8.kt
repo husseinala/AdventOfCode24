@@ -1,6 +1,7 @@
 package solution
 
 import utils.*
+import utils.CharGridUtils.liesOn
 
 object Day8 {
 
