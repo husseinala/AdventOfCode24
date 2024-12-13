@@ -22,8 +22,10 @@ object GridDirections {
 typealias Point = Pair<Int, Int>
 
 val Point.i get() = first
-
 val Point.j get() = second
+
+val Point.y get() = i
+val Point.x get() = j
 
 object CharGridUtils {
     infix fun Point.liesOn(grid: List<CharArray>) = i in grid.indices && j in grid.indices
