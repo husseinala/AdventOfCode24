@@ -6,7 +6,7 @@ import utils.GridDirections.left
 import utils.GridDirections.nonDiagDirs
 import utils.GridDirections.right
 import utils.GridDirections.up
-import utils.ListGridUtils.liesOn
+import utils.CharGridUtils.liesOn
 
 object Day12 {
 

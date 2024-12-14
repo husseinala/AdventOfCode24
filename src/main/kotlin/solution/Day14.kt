@@ -1,9 +1,10 @@
 package solution
 
-import utils.Point
-import utils.readFileLines
-import utils.x
-import utils.y
+import utils.*
+import utils.GridDirections.down
+import utils.GridDirections.right
+import utils.CharGridUtils.liesOn
+import kotlin.math.max
 
 private data class Robot(
     val position: Point,
@@ -11,6 +12,9 @@ private data class Robot(
 )
 
 object Day14 {
+
+    private const val width = 101
+    private const val height = 103
 
     fun solve() {
         part1()
@@ -23,7 +27,8 @@ object Day14 {
         val qCounts = IntArray(4)
 
         input.forEach {
-            val q = calculate(robot = it, seconds = 100)
+            val position = calculatePositionAfter(robot = it, seconds = 100)
+            val q = getQuadrant(position)
             if (q != -1) qCounts[q]++
         }
 
@@ -35,21 +40,59 @@ object Day14 {
     private fun part2() {
         val input = processInput()
 
-        println("Part 2: ")
+        var seconds = 0
+        while (true) {
+            val map = Array(height) { CharArray(width) { ' ' } }.toList()
+            val visited = Array(height) { BooleanArray(width) }
+
+            input.forEach {
+                val position = calculatePositionAfter(it, seconds)
+
+                map[position.i][position.j] = '.'
+            }
+
+            var maxConnected = 0
+
+            for (i in 0 until height) {
+                for (j in 0 until width) {
+                    maxConnected = max(maxConnected, getConnectedPointsCount(i to j, map, visited))
+                }
+            }
+
+            // find the first set of connected points and hope it's the tree
+            if (maxConnected > 50) {
+                println("After $seconds")
+                map.forEach {
+                    println(it.joinToString(""))
+                }
+                break
+            }
+
+            seconds++
+        }
+
+        println("Part 2: $seconds")
     }
 
-    private fun calculate(
-        robot: Robot,
-        seconds: Int = 0,
-        width: Int = 11,
-        height: Int = 7,
-    ): Int {
+    private fun calculatePositionAfter(robot: Robot, seconds: Int = 0): Point {
         val vx = (robot.velocity.x * seconds) % width
         val vy = (robot.velocity.y * seconds) % height
 
         var rx = robot.position.x
         var ry = robot.position.y
 
+        rx += vx
+        ry += vy
+
+        if (rx < 0) rx += width
+        if (ry < 0) ry += height
+        if (rx >= width) rx -= width
+        if (ry >= height) ry -= height
+
+        return ry to rx
+    }
+
+    private fun getQuadrant(position: Point): Int {
         val halfWidth = (width - 1) / 2
         val halfHeight = (height - 1) / 2
 
@@ -60,15 +103,17 @@ object Day14 {
             (halfWidth + 1 to width - 1) to (halfHeight + 1 to height - 1),
         )
 
-        rx += vx
-        ry += vy
+        return quadrants.indexOfFirst { (x, y) ->
+            position.x in x.first..x.second && position.y in y.first..y.second
+        }
+    }
 
-        if (rx < 0) rx += width
-        if (ry < 0) ry += height
-        if (rx >= width) rx -= width
-        if (ry >= height) ry -= height
-
-        return quadrants.indexOfFirst { (x, y) -> rx in x.first..x.second && ry in y.first..y.second }
+    private fun getConnectedPointsCount(point: Point, map: List<CharArray>, visited: Array<BooleanArray>): Int {
+        visited[point.i][point.j] = true
+        return 1 + listOf(right, down)
+            .map { point + it }
+            .filter { it liesOn map && map[it] != ' ' && !visited[it.i][it.j]}
+            .sumOf { getConnectedPointsCount(it, map, visited) }
     }
 
     private fun processInput(): List<Robot> {

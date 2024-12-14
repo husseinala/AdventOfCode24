@@ -28,11 +28,11 @@ val Point.y get() = i
 val Point.x get() = j
 
 object CharGridUtils {
-    infix fun Point.liesOn(grid: List<CharArray>) = i in grid.indices && j in grid.indices
+    infix fun Point.liesOn(grid: List<CharArray>) = i in grid.indices && j in grid[i].indices
 }
 
 object ListGridUtils {
-    infix fun <T> Point.liesOn(grid: List<T>) = i in grid.indices && j in grid.indices
+    infix fun <T : Collection<A>, A> Point.liesOn(grid: List<T>) = i in grid.indices && j in grid[i].indices
 }
 
 operator fun Point.plus(other: Point): Point = i + other.i to j + other.j
