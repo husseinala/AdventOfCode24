@@ -1,8 +1,8 @@
-import solution.Day16
+import solution.Day17
 import kotlin.time.TimeSource
 
 fun main() {
     val startTime = TimeSource.Monotonic.markNow()
-    Day16.solve()
+    Day17.solve()
     println("Run time: ${startTime.elapsedNow()}")
 }
