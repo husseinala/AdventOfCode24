@@ -9,6 +9,7 @@ import utils.Point
 import utils.get
 import utils.plus
 import utils.readFileLines
+import java.util.PriorityQueue
 
 private data class Step(
     val point: Point,
@@ -46,21 +47,21 @@ object Day16 {
         }
 
         var ans = Long.MAX_VALUE to emptySet<Point>()
-        val queue = ArrayDeque<Step>()
+        val queue = PriorityQueue<Step> { a, b -> a.points.compareTo(b.points) }
         val visited = mutableMapOf<String, Long>()
 
-        queue.addLast(Step(startPoint, right, 0, emptySet()))
+        queue.offer(Step(startPoint, right, 0, emptySet()))
 
         while (queue.isNotEmpty()) {
-            var (p, dir, total, tiles) = queue.removeFirst()
+            var (p, dir, total, tiles) = queue.poll()
 
             tiles += p
 
             if (map[p] == 'E') {
-                if (ans.first > total) {
-                    ans = total to tiles
-                } else if (ans.first == total) {
-                    ans = ans.copy(second = ans.second + tiles)
+                if (ans.first >= total) {
+                    ans = total to ans.second + tiles
+                } else {
+                    break
                 }
             } else {
                 visited["$p-$dir"] = total
@@ -75,12 +76,12 @@ object Day16 {
                     }
                 }
                     .filter { (dir, points) ->
-                        p + dir liesOn map && map[p + dir] != '#' && total + points < ans.first && (!visited.contains(
+                        p + dir liesOn map && map[p + dir] != '#' && (!visited.contains(
                             "${p + dir}-$dir"
                         ) || visited["${p + dir}-$dir"]!! > total + points)
                     }
                     .forEach {
-                        queue.addLast(Step(p + it.first, it.first, total + it.second, tiles))
+                        queue.offer(Step(p + it.first, it.first, total + it.second, tiles))
                     }
             }
         }
