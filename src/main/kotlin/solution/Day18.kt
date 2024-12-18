@@ -3,6 +3,7 @@ package solution
 import utils.*
 import java.util.ArrayDeque
 import utils.GridDirections.nonDiagDirs
+import kotlin.math.floor
 
 object Day18 {
 
@@ -16,8 +17,8 @@ object Day18 {
         val end = if (coordinates.size == 25) 6 else 70
         val take = if (coordinates.size == 25) 12 else 1024
 
-        val ans = bfs(coordinates.take(take).toMutableList(), end = end to end)
-        println("Part 1: ${ans.size - 1}")
+        val ans = bfs(coordinates.take(take).toMutableSet(), end = end to end)
+        println("Part 1: $ans")
     }
 
     private fun part2() {
@@ -25,39 +26,50 @@ object Day18 {
         val end = if (coordinates.size == 25) 6 else 70
         val start = if (coordinates.size == 25) 12 else 1024
 
-        var previousPath = bfs(coordinates.take(start).toMutableList(), end = end to end)
+        var low = start + 1
+        var high = coordinates.size
 
-        val ans = (start + 1..coordinates.size).first { take ->
-            if (previousPath.contains(coordinates[take - 1])) {
-                previousPath = bfs(coordinates.take(take).toMutableList(), end = end to end)
+        while (low < high) {
+            val mid = floor((low + high) / 2.0).toInt()
+
+            val ans = bfs(coordinates.take(mid).toMutableSet(), end = end to end)
+
+            if (ans == -1) {
+                high = mid
+            } else {
+                low = mid + 1
             }
+        }
 
-            previousPath.isEmpty()
-        }.let { coordinates[it - 1] }
+        val ans = coordinates[low - 1]
 
         println("Part 2: ${ans.x},${ans.y}")
     }
 
-    private fun bfs(coordinates: MutableList<Point>, end: Point): Set<Point> {
+    private fun bfs(coordinates: MutableSet<Point>, end: Point): Int {
         val start = 0 to 0
 
-        val queue = ArrayDeque<List<Point>>()
+        val queue = ArrayDeque<Point>()
 
-        queue.offer(listOf(start))
+        queue.offer(start)
+        var count = 0
         while (queue.isNotEmpty()) {
-            val p = queue.poll()
+            repeat(queue.size) {
+                val p = queue.poll()
 
-            if (p.last() == end) return p.toSet()
+                if (p == end) return count
 
-            nonDiagDirs.map { p.last() + it }
-                .filter { it liesOn (start to end) && !coordinates.contains(it) }
-                .forEach {
-                    coordinates.add(it)
-                    queue.offer(p + it)
-                }
+                nonDiagDirs.map { p + it }
+                    .filter { it liesOn (start to end) && !coordinates.contains(it) }
+                    .forEach {
+                        coordinates.add(it)
+                        queue.offer(it)
+                    }
+            }
+            count++
         }
 
-        return emptySet()
+        return -1
     }
 
     private fun processInput(): List<Point> {
