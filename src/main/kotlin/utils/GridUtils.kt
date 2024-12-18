@@ -35,6 +35,8 @@ object ListGridUtils {
     infix fun <T : Collection<A>, A> Point.liesOn(grid: List<T>) = i in grid.indices && j in grid[i].indices
 }
 
+infix fun Point.liesOn(grid: Pair<Point, Point>) = i in grid.first.i..grid.second.i && j in grid.first.j..grid.second.j
+
 operator fun Point.plus(other: Point): Point = i + other.i to j + other.j
 
 operator fun Point.minus(other: Point): Point = i - other.i to j - other.j

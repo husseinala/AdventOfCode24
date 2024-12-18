@@ -15,3 +15,12 @@ fun readFileLines(name: String, action: (line: String) -> Unit) {
 fun readFileLines(name: String): List<String> {
     return buildList { readFileLines(name) { add(it) } }
 }
+
+fun readFileAsString(name: String, separator: CharSequence = ", "): String {
+    return buildString {
+        readFileLines(name) { line ->
+            if (isNotEmpty()) append(separator)
+            append(line)
+        }
+    }
+}
