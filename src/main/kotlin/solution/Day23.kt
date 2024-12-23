@@ -31,9 +31,18 @@ object Day23 {
     private fun part2() {
         val connections = processInput()
 
-        val password = connections.map { (k, value) ->
-            listOf(k) + findMaxConnections(nodes = value, connections = connections)
-        }.maxBy { it.size }
+        val password = connections.entries.sortedBy { it.value.size }.fold(emptyList<String>()) { currentMax, pair ->
+            val (key, value) = pair
+
+            if (currentMax.size < value.size) {
+                val res = findMaxConnections(nodes = value, connections = connections)
+                if (currentMax.size - 1 < res.size) {
+                    return@fold listOf(key) + res
+                }
+            }
+
+            currentMax
+        }
             .sorted()
             .joinToString(",")
 
@@ -65,7 +74,7 @@ object Day23 {
     }
 
     private fun processInput(): Map<String, List<String>> {
-        val input = readFileLines("day23.txt").map { it.split("-").let { it[0] to it[1] } }
+        val input = readFileLines("day23.txt").map { it.split("-") }
 
         val connections = mutableMapOf<String, MutableList<String>>()
 
